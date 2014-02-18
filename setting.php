@@ -1,0 +1,8 @@
+<?php
+//設定
+$screen_name = ""; //TwitterID(ScreenName)で@抜き
+$consumer_key = ""; // Consumer keyの値
+$consumer_secret = ""; // Consumer secretの値
+$access_token = ""; // Access Tokenの値
+$access_token_secret = ""; // Access Token Secretの値
+$template = "@{screen_name} {name}に変更されました。"; //update_name受信後返信しない場合は空欄。「{name}」で変更後の名前に置き換え。「{screen_name}」でリプライを送ってきた人のIDに置き換え。
