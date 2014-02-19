@@ -40,11 +40,15 @@ class Update_name{
 	function UserStreamOutput($json){
 		if(!empty($json["text"])){
 			if(empty($json["retweeted_status"]["text"])){
-				if(preg_match("/[a-zA-Z]{2} \@?[a-zA-Z0-9_]+/ui",$json["text"])) return 0;
+				if(preg_match("/^.*?[a-zA-Z]{2} \@?[a-zA-Z0-9_]+/ui",$json["text"])){
+					if(!preg_match("/^\@".$this->_screen_name." update_name (.+)$/iu",$json["text"])){
+						return 0;
+					}
+				}
 				$name = null;
 				if(preg_match("/^(.+?)(（|\()\@".$this->_screen_name."(\)|）)$/iu",$json["text"],$preg)){
 					$name = $preg[1];
-				}else if(preg_match("/^\@".$this->_screen_name." update_name (.+?)$/iu",$json["text"],$preg)){
+				}else if(preg_match("/^\@".$this->_screen_name." update_name (.+)$/iu",$json["text"],$preg)){
 					$name = $preg[1];
 				}
 				if(!empty($name)){
