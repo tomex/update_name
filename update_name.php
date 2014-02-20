@@ -4,12 +4,14 @@ class Update_name{
 	private $_twitter;
 	private $_temp;
 	private $_template;
+	private $_error;
 	function __construct(){
 		chdir(dirname(__FILE__));
 		date_default_timezone_set("Asia/Tokyo");
 		require_once("setting.php");
 		$this->_screen_name = $screen_name;
 		$this->_template = $template;
+		$this->_error = $error;
 		$this->_temp = "";
 		require_once("lib/OAuth.php");
 		require_once("lib/twitteroauth.php");
@@ -51,12 +53,21 @@ class Update_name{
 				}else if(preg_match("/^\@".$this->_screen_name." update_name (.+)$/iu",$json["text"],$preg)){
 					$name = $preg[1];
 				}
+				$name = htmlspecialchars_decode($name);
 				if(!empty($name)){
-					$this->_twitter->post("account/update_profile",array("name"=>$name));
-					if(!empty($this->_template)){
-						$status = str_replace("{name}",$name,str_replace("{screen_name}",$json["user"]["screen_name"],$this->_template));
-						$update_id = $json["id_str"];
-						$this->_twitter->post("statuses/update",array("status"=>$status,"in_reply_to_status_id"=>$update_id));
+					if(mb_strlen($name)>20){
+						if(!empty($this->_error)){
+							$status = str_replace("{name}",$name,str_replace("{screen_name}",$json["user"]["screen_name"],$this->_error));
+							$update_id = $json["id_str"];
+							$this->_twitter->post("statuses/update",array("status"=>$status,"in_reply_to_status_id"=>$update_id));
+						}
+					}else{
+						$this->_twitter->post("account/update_profile",array("name"=>$name));
+						if(!empty($this->_template)){
+							$status = str_replace("{name}",$name,str_replace("{screen_name}",$json["user"]["screen_name"],$this->_template));
+							$update_id = $json["id_str"];
+							$this->_twitter->post("statuses/update",array("status"=>$status,"in_reply_to_status_id"=>$update_id));
+						}
 					}
 				}
 			}
